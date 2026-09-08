@@ -14,45 +14,39 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Repair credential sections
+      - name: Remove duplicated support block from SENA
         shell: python
         run: |
           from pathlib import Path
-          import re
-
           p = Path('index.html')
           s = p.read_text(encoding='utf-8')
-          original = s
 
-          # Keep the SENA area as visual/documentary evidence only.
-          sena_start = s.find('<section class="section" id="credenciales-sena">')
-          poly_start = s.find('<section class="section" id="politecnico">')
-          if sena_start != -1:
-              boundary = poly_start if poly_start != -1 and poly_start > sena_start else s.find('<section class="section" id="proyectos">', sena_start)
-              if boundary != -1:
-                  block = s[sena_start:boundary]
-                  block = re.sub(r'<div class="support-strip">.*?</div></div></section>\s*$', '</div></section>\n', block, flags=re.S)
-                  s = s[:sena_start] + block + s[boundary:]
+          # Remove any raw Markdown accidentally appended after the HTML document.
+          marker = '**Credenciales SENA**'
+          if marker in s:
+              pos = s.find(marker)
+              end = s.find('</html>', pos)
+              s = s[:pos] + (s[end:] if end != -1 else '\n</body></html>\n')
 
-          # The voluntary support/payment notice belongs only to Politécnico.
-          # Ensure the Politécnico section remains after SENA.
-          if 'id="politecnico"' not in s:
-              raise SystemExit('No se encontró la sección del Politécnico de Colombia.')
+          sena = '<section class="section" id="credenciales-sena">'
+          poly = '<section class="section" id="politecnico">'
+          a = s.find(sena)
+          b = s.find(poly, a)
+          if a == -1 or b == -1:
+              raise SystemExit('No se encontraron las secciones SENA y Politécnico.')
 
-          # Remove any Markdown block accidentally appended to the HTML document.
-          md_marker = '**Credenciales SENA**'
-          if md_marker in s:
-              pos = s.find(md_marker)
-              html_end = s.find('</html>', pos)
-              s = s[:pos] + (s[html_end:] if html_end != -1 else '\n</body></html>\n')
+          block = s[a:b]
+          support = block.find('<div class="support-strip">')
+          if support != -1:
+              closing = '</div></div></section>'
+              end = block.find(closing, support)
+              if end == -1:
+                  raise SystemExit('No se pudo localizar el cierre del bloque SENA.')
+              end += len(closing)
+              block = block[:support] + block[end:]
+              s = s[:a] + block + s[b:]
 
-          # Put Politécnico in navigation.
-          nav_anchor = '<li><a href="#credenciales-sena">SENA</a></li>'
-          poly_nav = '<li><a href="#politecnico">Politécnico</a></li>'
-          if nav_anchor in s and poly_nav not in s:
-              s = s.replace(nav_anchor, nav_anchor + poly_nav, 1)
-
+          # Ensure the Politécnico section remains intact and has its own support block.
           required = [
               'Gestión del Talento Humano',
               'Community Management',
@@ -61,55 +55,49 @@ jobs:
               '3JwdxWX6meJKZ6qgaezK',
               'PEa9rZWp9P4YmD8AqQl5',
               '$80.000 COP',
-              'mención de honor permanente',
+              'mención de honor permanente'
           ]
           missing = [x for x in required if x not in s]
           if missing:
               raise SystemExit('Faltan elementos del Politécnico: ' + ', '.join(missing))
 
-          # Never leave the SENA support/payment message in the SENA section.
-          sena_start = s.find('<section class="section" id="credenciales-sena">')
-          poly_start = s.find('<section class="section" id="politecnico">')
-          if sena_start != -1 and poly_start != -1 and sena_start < poly_start:
-              sena_block = s[sena_start:poly_start]
-              forbidden = ['Una vía de apoyo voluntario profesional para completar estas certificaciones:', '$80.000 COP']
-              found = [x for x in forbidden if x in sena_block]
-              if found:
-                  raise SystemExit('Contenido de soporte del Politécnico sigue dentro de SENA: ' + ', '.join(found))
+          # Navigation entry for the Politécnico section.
+          nav = '<li><a href="#credenciales-sena">SENA</a></li>'
+          poly_nav = '<li><a href="#politecnico">Politécnico</a></li>'
+          if nav in s and poly_nav not in s:
+              s = s.replace(nav, nav + poly_nav, 1)
 
           p.write_text(s, encoding='utf-8')
-          print('Credential sections repaired:', s != original)
-
-      - name: Validate HTML content
+          print('SENA support duplicated block removed.')
+      - name: Validate
         shell: bash
         run: |
           set -euo pipefail
           test -s index.html
-          test -s assets/credentials/sena/sgsst.jpg
-          test -s assets/credentials/sena/arh.jpg
-          test -s assets/credentials/sena/adl.jpg
           grep -q 'id="credenciales-sena"' index.html
           grep -q 'id="politecnico"' index.html
           grep -q 'Gestión del Talento Humano' index.html
           grep -q 'Community Management' index.html
           grep -q 'Instagram para el Desarrollo de Marcas' index.html
-          grep -q 'k7Nq48l6vA5G912bzJdZ' index.html
-          grep -q '3JwdxWX6meJKZ6qgaezK' index.html
-          grep -q 'PEa9rZWp9P4YmD8AqQl5' index.html
           grep -q '\$80.000 COP' index.html
           grep -q 'mención de honor permanente' index.html
-          if grep -q '\*\*Credenciales SENA\*\*' index.html; then exit 1; fi
+          if grep -q '\*\*Credenciales SENA\*\*' index.html; then
+            echo 'ERROR: Markdown leakage remains'
+            exit 1
+          fi
           python - <<'PY'
           from pathlib import Path
           s = Path('index.html').read_text(encoding='utf-8')
           a = s.find('<section class="section" id="credenciales-sena">')
-          b = s.find('<section class="section" id="politecnico">')
-          block = s[a:b] if a != -1 and b != -1 else ''
-          if 'Una vía de apoyo voluntario profesional para completar estas certificaciones:' in block or '$80.000 COP' in block:
-              raise SystemExit('SENA contiene contenido de soporte del Politécnico')
+          b = s.find('<section class="section" id="politecnico">', a)
+          sena = s[a:b]
+          if 'support-strip' in sena or '$80.000 COP' in sena:
+              raise SystemExit('SENA todavía contiene el bloque de apoyo del Politécnico')
+          poly = s[b:]
+          if 'support-strip' not in poly or '$80.000 COP' not in poly:
+              raise SystemExit('El bloque de apoyo del Politécnico desapareció')
           print('Validation OK')
           PY
-
       - name: Commit
         shell: bash
         run: |
@@ -121,5 +109,5 @@ jobs:
             echo 'No changes required.'
             exit 0
           fi
-          git commit -m 'fix: separate SENA and Politecnico credentials'
+          git commit -m 'fix: separate SENA and Politecnico credential sections'
           git push
