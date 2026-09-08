@@ -15,10 +15,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Point project cards to their live Pages sites
+      - name: Point project cards to their live Pages sites and publish credential evidence
         shell: python
         run: |
           from pathlib import Path
+          import base64, gzip, io, tarfile, re
 
           path = Path('index.html')
           text = path.read_text(encoding='utf-8')
@@ -30,20 +31,70 @@ jobs:
               'https://github.com/DiegoAlejandroSaenzFalcon/Trading-Ciencia': 'https://diegoalejandrosaenzfalcon.github.io/Trading-Ciencia/',
               'https://github.com/DiegoAlejandroSaenzFalcon/Directivas-de-Seguridad-IA': 'https://diegoalejandrosaenzfalcon.github.io/Directivas-de-Seguridad-IA/',
           }
-
           for old, new in replacements.items():
               text = text.replace(f'href="{old}"', f'href="{new}"')
 
+          # Publish the three certificate images supplied for this portfolio.
+          parts = [Path('.tmp/credential-bundle.part'+str(i)).read_text(encoding='utf-8') for i in range(1,5)]
+          packed = re.sub(r'\s+', '', ''.join(parts))
+          packed += '=' * ((4 - len(packed) % 4) % 4)
+          raw = gzip.decompress(base64.b64decode(packed))
+          wanted = {'SGSST.jpg':'sgsst.jpg','ARH.jpg':'arh.jpg','ADL.jpg':'adl.jpg'}
+          out = Path('assets/credentials/sena'); out.mkdir(parents=True, exist_ok=True)
+          with tarfile.open(fileobj=io.BytesIO(raw), mode='r:') as tar:
+              for member in tar.getmembers():
+                  name = Path(member.name).name
+                  if name in wanted:
+                      data = tar.extractfile(member).read()
+                      if not data.startswith(b'\xff\xd8\xff'):
+                          raise RuntimeError(f'{name} no es un JPEG válido')
+                      (out / wanted[name]).write_bytes(data)
+
+          # Remove only the two duplicate text-only Coursera entries; keep the visual cards.
+          for title in ('The Bits and Bytes of Computer Networking','Technical Support Fundamentals'):
+              text = re.sub(r'<article\s+class=["\']edu["\'][^>]*>.*?<h3>\s*'+re.escape(title)+r'\s*</h3>.*?</article>','',text,flags=re.I|re.S)
+
+          # Replace SENA viewers with the supplied images.
+          for code,(fn,title) in {
+              '9210001495565CC1070596699C':('sgsst.jpg','Sistema de Gestión de la Seguridad y Salud en el Trabajo SG-SST'),
+              '9208001508287CC1070596699C':('arh.jpg','Administración de Recursos Humanos'),
+              '9232001529759CC1070596699C':('adl.jpg','Administración Documental en el Entorno Laboral')}.items():
+              text = re.sub(r'<iframe[^>]*'+re.escape(code)+r'[^>]*></iframe>',f'<img class="sena-preview" src="assets/credentials/sena/{fn}" alt="{title}" loading="lazy">',text,flags=re.I|re.S)
+
+          # Normalize three existing SENA evidence cards to the supplied images, preserving their metadata.
+          imgs=[('sgsst.jpg','Sistema de Gestión de la Seguridad y Salud en el Trabajo SG-SST'),('arh.jpg','Administración de Recursos Humanos'),('adl.jpg','Administración Documental en el Entorno Laboral')]
+          cards=list(re.finditer(r'<article\s+class=["\']sena-card["\'][^>]*>',text,re.I))
+          for i in range(min(3,len(cards))-1,-1,-1):
+              start=cards[i].start(); end=cards[i+1].start() if i+1<len(cards) else len(text)
+              block=text[start:end]
+              img=f'<img class="sena-preview" src="assets/credentials/sena/{imgs[i][0]}" alt="{imgs[i][1]}" loading="lazy">'
+              block=re.sub(r'<img\b[^>]*class=["\']sena-preview["\'][^>]*>',img,block,count=1,flags=re.I|re.S)
+              text=text[:start]+block+text[end:]
+          if '.sena-preview{' not in text:
+              text=text.replace('</style>','.sena-preview{width:100%;height:430px;object-fit:contain;display:block;background:#07101d;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:10px}\n</style>',1)
           path.write_text(text, encoding='utf-8')
 
-      - name: Commit synchronized index
+      - name: Validate credential audit
+        shell: bash
         run: |
+          set -euo pipefail
+          test -s assets/credentials/sena/sgsst.jpg
+          test -s assets/credentials/sena/arh.jpg
+          test -s assets/credentials/sena/adl.jpg
+          ! grep -q '<iframe' index.html
+          test "$(grep -o 'class=\"sena-preview\"' index.html | wc -l | tr -d ' ')" = "3"
+
+      - name: Commit synchronized portfolio
+        run: |
+          set -euo pipefail
+          rm -f .tmp/credential-bundle.b64 .tmp/credential-bundle.part1 .tmp/credential-bundle.part2 .tmp/credential-bundle.part3 .tmp/credential-bundle.part4 .tmp/sgsst.b64 .tmp/arh.b64 .tmp/adl.b64
+          rm -f .github/workflows/update-credential-previews.yml .github/workflows/fix-coursera-duplicates.yml .github/workflows/apply-credential-audit.yml
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html
+          git add index.html assets/credentials/sena/*.jpg .tmp .github/workflows
           if git diff --cached --quiet; then
-            echo "No project-link changes required."
+            echo "No synchronization changes required."
             exit 0
           fi
-          git commit -m "chore: point project cards to live Pages sites"
+          git commit -m "fix: finalize credential evidence without duplicates"
           git push
