@@ -68,7 +68,7 @@ jobs:
 
           # SENA evidence section, sourced from repository assets already present.
           if 'id="credenciales-sena"' not in s:
-            sena='''<section class="section" id="credenciales-sena"><div class="container"><div class="heading"><span class="eyebrow">Credenciales SENA</span><h2>Evidencia documental <span class="gradient">de formación.</span></h2><p>Certificados SENA conservados como evidencia documental, con sus códigos de verificación oficiales.</p></div><div class="sena-grid"><article class="sena-card"><div class="sena-image"><img src="assets/credentials/sena/sgsst.jpg" alt="Certificado SENA: Sistema de Gestión de la Seguridad y Salud en el Trabajo (SG-SST)"></div><div class="sena-body"><h3>Sistema de Gestión de la Seguridad y Salud en el Trabajo (SG-SST)</h3><p>SENA · 50 horas · 30 ago. 2017</p><div class="sena-meta"><span>ID 9210001495565CC1070596699C</span></div><a class="small-button" style="margin-top:14px" href="https://certificados.sena.edu.co/CertificadoDigital/com.sena.guardar?var1=9210001495565CC1070596699C" target="_blank" rel="noopener noreferrer">Verificación oficial</a></div></article><article class="sena-card"><div class="sena-image"><img src="assets/credentials/sena/arh.jpg" alt="Certificado SENA: Administración de Recursos Humanos"></div><div class="sena-body"><h3>Administración de Recursos Humanos</h3><p>SENA · 40 horas · 11 sep. 2017</p><div class="sena-meta"><span>ID 9208001508287CC1070596699C</span></div><a class="small-button" style="margin-top:14px" href="https://certificados.sena.edu.co/CertificadoDigital/com.sena.guardar?var1=9208001508287CC1070596699C" target="_blank" rel="noopener noreferrer">Verificación oficial</a></div></article><article class="sena-card"><div class="sena-image"><img src="assets/credentials/sena/adl.jpg" alt="Certificado SENA: Administración Documental en el Entorno Laboral"></div><div class="sena-body"><h3>Administración Documental en el Entorno Laboral</h3><p>SENA · 40 horas · 09 oct. 2017</p><div class="sena-meta"><span>ID 9232001529759CC1070596699C</span></div><a class="small-button" style="margin-top:14px" href="https://certificados.sena.edu.co/CertificadoDigital/com.sena.guardar?var1=9232001529759CC1070596699C" target="_blank" rel="noopener noreferrer">Verificación oficial</a></div></article></div><div class="support-strip"><div><strong>Una vía de apoyo voluntario profesional para completar estas certificaciones:</strong><p>Quien desee respaldar este proceso puede realizar el pago directamente en la pasarela institucional correspondiente. El portafolio no recibe ni administra recursos. Como reconocimiento, se podrá registrar una mención de honor permanente para quien cubra voluntariamente una certificación y desee ser reconocido.</p></div><div class="support-price">$80.000 COP<br><small>por certificación</small></div></div></div></section>'''
+            sena='''<section class="section" id="credenciales-sena"><div class="container"><div class="heading"><span class="eyebrow">Credenciales SENA</span><h2>Evidencia documental <span class="gradient">de formación.</span></h2><p>Certificados SENA conservados como evidencia documental, con sus códigos de verificación oficiales.</p></div><div class="sena-grid"><article class="sena-card"><div class="sena-image"><img src="assets/credentials/sena/sgsst.jpg" alt="Certificado SENA: Sistema de Gestión de la Seguridad y Salud en el Trabajo (SG-SST)"></div><div class="sena-body"><h3>Sistema de Gestión de la Seguridad y Salud en el Trabajo (SG-SST)</h3><p>SENA · 50 horas · 30 ago. 2017</p><div class="sena-meta"><span>ID 9210001495565CC1070596699C</span></div><a class="small-button" style="margin-top:14px" href="https://certificados.sena.edu.co/CertificadoDigital/com.sena.guardar?var1=9210001495565CC1070596699C" target="_blank" rel="noopener noreferrer">Verificación oficial</a></div></article><article class="sena-card"><div class="sena-image"><img src="assets/credentials/sena/arh.jpg" alt="Certificado SENA: Administración de Recursos Humanos"></div><div class="sena-body"><h3>Administración de Recursos Humanos</h3><p>SENA · 40 horas · 11 sep. 2017</p><div class="sena-meta"><span>ID 9208001508287CC1070596699C</span></div><a class="small-button" style="margin-top:14px" href="https://certificados.sena.edu.co/CertificadoDigital/com.sena.guardar?var1=9208001508287CC1070596699C" target="_blank" rel="noopener noreferrer">Verificación oficial</a></div></article><article class="sena-card"><div class="sena-image"><img src="assets/credentials/sena/adl.jpg" alt="Certificado SENA: Administración Documental en el Entorno Laboral"></div><div class="sena-body"><h3>Administración Documental en el Entorno Laboral</h3><p>SENA · 40 horas · 09 oct. 2017</p><div class="sena-meta"><span>ID 9232001529759CC1070596699C</span></div><a class="small-button" style="margin-top:14px" href="https://certificados.sena.edu.co/CertificadoDigital/com.sena.guardar?var1=9232001529759CC1070596699C" target="_blank" rel="noopener noreferrer">Verificación oficial</a></div></article></div><div class="support-strip"><div><strong>Una vía de apoyo voluntario profesional para completar estas certificaciones:</strong><p>Quien desee respaldar este proceso puede realizar el proceso directamente en la pasarela institucional correspondiente. El portafolio no recibe ni administra recursos. Como reconocimiento, se podrá registrar una mención de honor permanente para quien cubra voluntariamente una certificación y desee ser reconocido.</p></div><div class="support-price">$80.000 COP<br><small>por certificación</small></div></div></div></section>'''
             s=s.replace('<section class="section" id="proyectos">',sena+'<section class="section" id="proyectos">',1)
 
           # Restore Politécnico credential evidence explicitly.
@@ -80,14 +80,24 @@ jobs:
             else:
               s=s.replace('</main>',politecnico+'</main>',1)
 
-          # Replace contact section with the professional contact structure.
-          start=s.find('<section class="section" id="contacto">')
-          if start!=-1:
-            end=s.find('</section>',start)
-            if end!=-1 and 'Línea empresarial · Soluciona Inteligencia Artificial' not in s[start:end]:
-              end += len('</section>')
-              contact='''<section class="section" id="contacto"><div class="container"><div class="contact"><span class="eyebrow">Contacto profesional</span><h2>Convirtamos una necesidad en una <span class="gradient">solución.</span></h2><p>Disponible para oportunidades relacionadas con soporte TI, sistemas, redes, infraestructura, desarrollo web, automatización, operaciones y proyectos digitales.</p><div class="contact-grid contact-grid-expanded"><a class="contact-item" href="tel:+573134348629"><span class="contact-icon"><i class="ri-phone-line"></i></span><span><span class="contact-label">Contacto profesional · Diego Saenz Falcon</span><span class="contact-value">+57 313 434 8629</span></span></a><a class="contact-item" href="https://wa.me/573134348629" target="_blank" rel="noopener noreferrer"><span class="contact-icon"><i class="ri-whatsapp-line"></i></span><span><span class="contact-label">WhatsApp · Diego Saenz Falcon</span><span class="contact-value">+57 313 434 8629</span></span></a><a class="contact-item" href="tel:+573224303964"><span class="contact-icon"><i class="ri-phone-line"></i></span><span><span class="contact-label">Línea empresarial · Soluciona Inteligencia Artificial</span><span class="contact-value">+57 322 430 3964</span></span></a><a class="contact-item" href="https://wa.me/573224303964" target="_blank" rel="noopener noreferrer"><span class="contact-icon"><i class="ri-whatsapp-line"></i></span><span><span class="contact-label">WhatsApp · Soluciona Inteligencia Artificial</span><span class="contact-value">+57 322 430 3964</span></span></a><a class="contact-item" href="mailto:diegoalejandrosaenzfalcon@gmail.com"><span class="contact-icon"><i class="ri-mail-line"></i></span><span><span class="contact-label">Email</span><span class="contact-value">diegoalejandrosaenzfalcon@gmail.com</span></span></a><a class="contact-item" href="https://www.linkedin.com/in/diegosaenzfalcon" target="_blank" rel="noopener noreferrer"><span class="contact-icon"><i class="ri-linkedin-fill"></i></span><span><span class="contact-label">LinkedIn</span><span class="contact-value">/in/diegosaenzfalcon</span></span></a><a class="contact-item" href="https://github.com/DiegoAlejandroSaenzFalcon" target="_blank" rel="noopener noreferrer"><span class="contact-icon"><i class="ri-github-line"></i></span><span><span class="contact-label">GitHub</span><span class="contact-value">/DiegoAlejandroSaenzFalcon</span></span></a><div class="contact-item"><span class="contact-icon"><i class="ri-map-pin-line"></i></span><span><span class="contact-label">Ubicación</span><span class="contact-value">Bogotá, Colombia</span></span></div><a class="contact-item" href="https://diegoalejandrosaenzfalcon.github.io/" target="_blank" rel="noopener noreferrer"><span class="contact-icon"><i class="ri-global-line"></i></span><span><span class="contact-label">Portafolio</span><span class="contact-value">diegoalejandrosaenzfalcon.github.io</span></span></a></div></div></div></section>'''
-              s=s[:start]+contact+s[end:]
+          # Final credential cleanup: remove any stray Markdown and keep the SENA section documentary only.
+          md_marker='**Credenciales SENA**'
+          if md_marker in s:
+            pos=s.find(md_marker)
+            html_end=s.find('</html>',pos)
+            s=s[:pos] + (s[html_end:] if html_end!=-1 else '\n</body></html>\n')
+
+          sena_start=s.find('<section class="section" id="credenciales-sena">')
+          poly_start=s.find('<section class="section" id="politecnico">')
+          if sena_start!=-1 and poly_start!=-1 and sena_start < poly_start:
+            sena_block=s[sena_start:poly_start]
+            sena_block=re.sub(r'<div class="support-strip">.*?</div></div></section>\s*$', '</div></section>\n', sena_block, flags=re.S)
+            s=s[:sena_start]+sena_block+s[poly_start:]
+
+          nav_anchor='<li><a href="#credenciales-sena">SENA</a></li>'
+          poly_nav='<li><a href="#politecnico">Politécnico</a></li>'
+          if nav_anchor in s and poly_nav not in s:
+            s=s.replace(nav_anchor,nav_anchor+poly_nav,1)
 
           p.write_text(s,encoding='utf-8')
           print('Final corrections applied')
@@ -113,6 +123,19 @@ jobs:
           grep -q 'Línea empresarial · Soluciona Inteligencia Artificial' index.html
           grep -q 'WhatsApp · Diego Saenz Falcon' index.html
           grep -q 'Sistemas<br>que' index.html
+          if grep -q '\*\*Credenciales SENA\*\*' index.html; then echo 'ERROR: stray Markdown detected'; exit 1; fi
+          if python - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('index.html').read_text(encoding='utf-8')
+          a=s.find('<section class="section" id="credenciales-sena">')
+          b=s.find('<section class="section" id="politecnico">')
+          block=s[a:b] if a!=-1 and b!=-1 else ''
+          bad=['Una vía de apoyo voluntario profesional para completar estas certificaciones:','$80.000 COP']
+          raise SystemExit(1) if any(x in block for x in bad) else None
+          print('SENA clean; Politecnico support isolated.')
+          PY
+          then exit 1; fi
 
       - name: Commit final result
         shell: bash
