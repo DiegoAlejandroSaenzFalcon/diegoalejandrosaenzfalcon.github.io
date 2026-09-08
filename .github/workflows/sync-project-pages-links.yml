@@ -1,0 +1,49 @@
+name: Sync project Pages links
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Point project cards to their live Pages sites
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+          replacements = {
+              'https://github.com/DiegoAlejandroSaenzFalcon/Automatizacion-de-Datos': 'https://diegoalejandrosaenzfalcon.github.io/Automatizacion-de-Datos/',
+              'https://github.com/DiegoAlejandroSaenzFalcon/Tecnologias-de-la-Informacion': 'https://diegoalejandrosaenzfalcon.github.io/Tecnologias-de-la-Informacion/',
+              'https://github.com/DiegoAlejandroSaenzFalcon/Red-Hat-Enterprise-Linux': 'https://diegoalejandrosaenzfalcon.github.io/Red-Hat-Enterprise-Linux/',
+              'https://github.com/DiegoAlejandroSaenzFalcon/Windows-11-Professional': 'https://diegoalejandrosaenzfalcon.github.io/Windows-11-Professional/',
+              'https://github.com/DiegoAlejandroSaenzFalcon/Trading-Ciencia': 'https://diegoalejandrosaenzfalcon.github.io/Trading-Ciencia/',
+              'https://github.com/DiegoAlejandroSaenzFalcon/Directivas-de-Seguridad-IA': 'https://diegoalejandrosaenzfalcon.github.io/Directivas-de-Seguridad-IA/',
+          }
+
+          for old, new in replacements.items():
+              text = text.replace(f'href="{old}"', f'href="{new}"')
+
+          path.write_text(text, encoding='utf-8')
+
+      - name: Commit synchronized index
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "No project-link changes required."
+            exit 0
+          fi
+          git commit -m "chore: point project cards to live Pages sites"
+          git push
