@@ -1,15 +1,11 @@
-# Diego Alejandro Saenz Falcon — Portafolio
+# Diego Alejandro Saenz Falcon — Portfolio
 
-Sitio principal del portafolio profesional.
+Public CV and evidence-first professional portfolio.
 
-- **Autor:** Diego Alejandro Saenz Falcon
-- **Sitio:** https://diegoalejandrosaenzfalcon.github.io/
-- **Email:** diegoalejandrosaenzfalcon@gmail.com
+Site: https://diegoalejandrosaenzfalcon.github.io/
 
-## Contenido
+This repository is the public presentation layer for a truthful transition from logistics, operations and sales experience toward the first formal IT/support opportunity.
 
-- `index.html` — página principal.
+Experience, education, certifications, knowledge, personal projects and evidence are intentionally separated.
 
-## Publicar
-
-Este repositorio es el sitio principal de GitHub Pages para la cuenta.
+Cross-project governance belongs to DiegoAlejandroSaenzFalcon/Directivas-de-Seguridad.
