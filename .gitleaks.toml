@@ -1,0 +1,57 @@
+title = "Gitleaks config for portfolio"
+
+[allowlist]
+description = "Allowlist for portfolio public references"
+paths = [
+  "index.html",
+  "README.md",
+  "llms.txt",
+  "AGENTS.md",
+  "SECURITY.md",
+  "GOVERNANCE.md"
+]
+
+[[rules]]
+id = "github-pat"
+description = "GitHub Personal Access Token"
+regex = '''ghp_[0-9a-zA-Z]{36}'''
+
+[[rules]]
+id = "github-oauth"
+description = "GitHub OAuth Token"
+regex = '''gho_[0-9a-zA-Z]{36}'''
+
+[[rules]]
+id = "github-app-token"
+description = "GitHub App Token"
+regex = '''ghs_[0-9a-zA-Z]{36}'''
+
+[[rules]]
+id = "generic-api-key"
+description = "Generic API Key"
+regex = '''[aA][pP][iI][-_]?[kK][eE][yY].*['"][0-9a-zA-Z]{32,}['"]'''
+
+[[rules]]
+id = "generic-secret"
+description = "Generic Secret"
+regex = '''[sS][eE][cC][rR][eE][tT].*['"][0-9a-zA-Z]{32,}['"]'''
+
+[[rules]]
+id = "aws-access-key"
+description = "AWS Access Key"
+regex = '''AKIA[0-9A-Z]{16}'''
+
+[[rules]]
+id = "aws-secret-key"
+description = "AWS Secret Key"
+regex = '''[0-9a-zA-Z/+]{40}'''
+
+[[rules]]
+id = "slack-token"
+description = "Slack Token"
+regex = '''xox[baprs]-[0-9a-zA-Z]{10,48}'''
+
+[[rules]]
+id = "discord-token"
+description = "Discord Token"
+regex = '''[MN][A-Za-z\d]{23}\.[\w-]{6}\.[\w-]{27}'''

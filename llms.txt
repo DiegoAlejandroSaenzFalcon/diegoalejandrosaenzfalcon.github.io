@@ -1,0 +1,35 @@
+# Diego Alejandro Saenz Falcon — Portfolio (llms.txt)
+
+## Site Purpose
+Public professional portfolio presenting Diego Alejandro Saenz Falcon's profile: systems, IT infrastructure, technical support, networks, Linux, Windows, automation, and web development. Bogotá, Colombia.
+
+## Source of Truth
+- **Governance & Security Policies**: Directivas-de-Seguridad (private repository) — central authority
+- **Professional Data**: Authored and maintained by Diego Alejandro Saenz Falcon
+- **This Repository**: Public presentation surface only; not the source of truth for governance
+
+## Contribution Rules
+- All changes via feature branch + Pull Request against `main`
+- No direct pushes to `main`
+- No secrets, keys, or sensitive data
+- No fabricated professional content or unauthorized "VERIFIED" claims
+- Preserve CV, experience, education, contact, and design integrity
+- Minimal changes: only governance, security, link integrity fixes
+
+## Public References
+- Portfolio: https://diegoalejandrosaenzfalcon.github.io/
+- GitHub: https://github.com/DiegoAlejandroSaenzFalcon
+- LinkedIn: https://www.linkedin.com/in/diegosaenzfalcon
+- Email: diegoalejandrosaenzfalcon@gmail.com
+- Phone: +57 313 434 8629 / +57 322 430 3964
+
+## Projects (Public)
+- Soluciona Inteligencia Artificial: https://diegoalejandrosaenzfalcon.github.io/Soluciona-Inteligencia-Artificial/
+- Automatización de Datos: https://diegoalejandrosaenzfalcon.github.io/Automatizacion-de-Datos/
+- Tecnologías de la Información: https://diegoalejandrosaenzfalcon.github.io/Tecnologias-de-la-Informacion/
+- Red Hat Enterprise Linux: https://diegoalejandrosaenzfalcon.github.io/Red-Hat-Enterprise-Linux/
+- Windows 11 Professional: https://diegoalejandrosaenzfalcon.github.io/Windows-11-Professional/
+- Trading Ciencia: https://diegoalejandrosaenzfalcon.github.io/Trading-Ciencia/
+
+## Governance Reference (Private)
+- Directivas-de-Seguridad: Private repository — central policy authority for the ecosystem. Not publicly accessible. Referenced here for governance transparency only.
