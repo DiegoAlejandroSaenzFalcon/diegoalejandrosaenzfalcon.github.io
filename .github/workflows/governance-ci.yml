@@ -20,8 +20,6 @@ jobs:
 
       - name: Secret scan (gitleaks)
         uses: gitleaks/gitleaks-action@v2
-        with:
-          config: .gitleaks.toml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -45,7 +43,7 @@ jobs:
       - name: Link check (public links only)
         uses: lycheeverse/lychee-action@v1
         with:
-          args: --verbose --no-progress --exclude-mail --remap "https://github.com/DiegoAlejandroSaenzFalcon/Directivas-de-Seguridad https://github.com/DiegoAlejandroSaenzFalcon/Directivas-de-Seguridad (private)"
+          args: --verbose --no-progress --exclude-mail
           fail: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
