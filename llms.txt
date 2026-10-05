@@ -1,0 +1,31 @@
+# llms.txt — Diego Alejandro Saenz Falcon Portfolio
+
+## Purpose
+
+This site is the public presentation and evidence layer for Diego Alejandro Saenz Falcon's professional profile.
+
+## Truth model
+
+- EXPERIENCE = real employment history.
+- EDUCATION = studies and current training.
+- CERTIFICATION = issued credentials only.
+- KNOWLEDGE = skills acquired through study and practice.
+- PERSONAL_PROJECT = personal learning or experimental work.
+- EVIDENCE = links or artifacts supporting claims.
+
+Never convert a personal project, course, study, knowledge claim or experiment into employment experience.
+
+## Professional positioning
+
+Diego is transitioning from logistics, operations and sales toward his first formal IT/support opportunity. Do not describe him as a professional SysAdmin, engineer, senior technician, bilingual candidate or experienced IT worker unless an explicit verified source supports that claim.
+
+## Portfolio governance
+
+Cross-project authority is DiegoAlejandroSaenzFalcon/Directivas-de-Seguridad. This repository is a presentation layer, not a governance authority.
+
+## Primary goals
+
+- Present truthful work experience.
+- Show current technical learning and certifications.
+- Demonstrate practical projects with public evidence.
+- Make the transition toward junior IT/support roles clear to recruiters.
