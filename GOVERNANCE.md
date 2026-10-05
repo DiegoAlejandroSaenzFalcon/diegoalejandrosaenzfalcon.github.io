@@ -26,6 +26,7 @@ This portfolio **consumes and represents** public information derived from that 
 - Declare VERIFIED status without authoritative source
 - Modify professional data without explicit authorization
 - Create parallel governance structures
+- Mutate the default branch automatically from CI
 
 ## Change Control
 All modifications to this repository follow the rules in AGENTS.md:
@@ -35,11 +36,17 @@ All modifications to this repository follow the rules in AGENTS.md:
 4. CI must pass before merge consideration
 5. Final authority (Diego Alejandro Saenz Falcon) merges
 
+## CI Control
+The repository CI is **validation-only**. CI may inspect, test and report repository state, but it must not modify tracked source files, create commits, or push to the default branch. Source changes are made through an authorized branch and Pull Request.
+
+The CI architecture and failure-prevention rules are documented in `CI-POLICY.md`.
+
 ## Compliance
 This portfolio aligns with the governance framework defined in Directivas-de-Seguridad. Compliance is verified through:
 - Automated CI checks (secrets, HTML, links, structure)
 - Manual review by final authority
 - No public disclosure of private policy content
+- No CI-driven source mutation
 
 ## Contact
 Governance inquiries: diegoalejandrosaenzfalcon@gmail.com (subject: [GOVERNANCE] Portfolio)
