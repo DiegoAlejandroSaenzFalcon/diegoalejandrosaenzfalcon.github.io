@@ -43,7 +43,7 @@ jobs:
       - name: Link check (public links only)
         uses: lycheeverse/lychee-action@v1
         with:
-          args: --verbose --no-progress --exclude-mail --remap "https://github.com/DiegoAlejandroSaenzFalcon/Directivas-de-Seguridad https://github.com/DiegoAlejandroSaenzFalcon/Directivas-de-Seguridad (private)"
+          args: --verbose --no-progress --exclude-mail --exclude "https://github.com/DiegoAlejandroSaenzFalcon/Directivas-de-Seguridad"
           fail: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -61,7 +61,7 @@ jobs:
         run: |
           set -euo pipefail
           grep -q "Final authority.*Diego Alejandro Saenz Falcon" AGENTS.md
-          grep -q "Directivas-de-Seguridad.*central policy authority" AGENTS.md
+          grep -q "Central policy authority.*Directivas-de-Seguridad" AGENTS.md
           grep -q "Branch.*PR only" AGENTS.md
           grep -q "No secrets" AGENTS.md
           echo "AGENTS.md content validated"
@@ -76,9 +76,9 @@ jobs:
       - name: Validate GOVERNANCE.md content
         run: |
           set -euo pipefail
-          grep -q "Directivas-de-Seguridad.*central governance authority" GOVERNANCE.md
+          grep -q "Directivas-de-Seguridad.*single source of truth" GOVERNANCE.md
           grep -q "presentation surface" GOVERNANCE.md
-          grep -q "does NOT" GOVERNANCE.md
+          grep -q "Does NOT" GOVERNANCE.md
           echo "GOVERNANCE.md content validated"
 
       - name: Validate llms.txt content
