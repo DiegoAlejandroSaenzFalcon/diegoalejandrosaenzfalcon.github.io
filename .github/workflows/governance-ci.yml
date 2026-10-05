@@ -1,0 +1,90 @@
+name: Governance CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  governance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Secret scan (gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Validate HTML structure
+        run: |
+          set -euo pipefail
+          test -s index.html
+          head -1 index.html | grep -qi '<!DOCTYPE html>'
+          grep -q '<html' index.html
+          grep -q '</html>' index.html
+          echo "HTML structure OK"
+
+      - name: Check required governance files
+        run: |
+          set -euo pipefail
+          for f in AGENTS.md SECURITY.md GOVERNANCE.md llms.txt; do
+            test -s "$f" || { echo "Missing or empty: $f"; exit 1; }
+          done
+          echo "All required files present"
+
+      - name: Link check (public links only)
+        uses: lycheeverse/lychee-action@v1
+        with:
+          args: --verbose --no-progress --exclude-mail
+          fail: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify no private Pages URLs referenced
+        run: |
+          set -euo pipefail
+          if grep -r 'diegoalejandrosaenzfalcon\.github\.io/Directivas-de-Seguridad' --include="*.html" --include="*.md" --include="*.txt" .; then
+            echo "ERROR: Old private Pages URL still referenced"
+            exit 1
+          fi
+          echo "No old private Pages URLs found"
+
+      - name: Validate AGENTS.md content
+        run: |
+          set -euo pipefail
+          grep -q "Final authority.*Diego Alejandro Saenz Falcon" AGENTS.md
+          grep -q "Directivas-de-Seguridad.*central policy authority" AGENTS.md
+          grep -q "Branch.*PR only" AGENTS.md
+          grep -q "No secrets" AGENTS.md
+          echo "AGENTS.md content validated"
+
+      - name: Validate SECURITY.md content
+        run: |
+          set -euo pipefail
+          grep -q "Directivas-de-Seguridad" SECURITY.md
+          grep -q "No Secrets" SECURITY.md
+          echo "SECURITY.md content validated"
+
+      - name: Validate GOVERNANCE.md content
+        run: |
+          set -euo pipefail
+          grep -q "Directivas-de-Seguridad.*central governance authority" GOVERNANCE.md
+          grep -q "presentation surface" GOVERNANCE.md
+          grep -q "does NOT" GOVERNANCE.md
+          echo "GOVERNANCE.md content validated"
+
+      - name: Validate llms.txt content
+        run: |
+          set -euo pipefail
+          grep -q "Source of Truth" llms.txt
+          grep -q "Directivas-de-Seguridad.*private" llms.txt
+          grep -q "Contribution Rules" llms.txt
+          echo "llms.txt content validated"
