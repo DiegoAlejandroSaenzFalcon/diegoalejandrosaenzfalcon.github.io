@@ -60,23 +60,22 @@ jobs:
       - name: Validate AGENTS.md content
         run: |
           set -euo pipefail
-          grep -q "Final authority.*Diego Alejandro Saenz Falcon" AGENTS.md
-          grep -q "Directivas-de-Seguridad.*central policy authority" AGENTS.md
-          grep -q "Branch.*PR only" AGENTS.md
-          grep -q "No secrets" AGENTS.md
+          grep -q "Central authority: DiegoAlejandroSaenzFalcon/Directivas-de-Seguridad" AGENTS.md
+          grep -q "Use branches and pull requests" AGENTS.md
+          grep -q "Never add secrets" AGENTS.md
           echo "AGENTS.md content validated"
 
       - name: Validate SECURITY.md content
         run: |
           set -euo pipefail
           grep -q "Directivas-de-Seguridad" SECURITY.md
-          grep -q "No Secrets" SECURITY.md
+          grep -q "Do not commit passwords" SECURITY.md
           echo "SECURITY.md content validated"
 
       - name: Validate GOVERNANCE.md content
         run: |
           set -euo pipefail
-          grep -q "Directivas-de-Seguridad.*central governance authority" GOVERNANCE.md
+          grep -qi "Central Governance Authority" GOVERNANCE.md
           grep -q "presentation surface" GOVERNANCE.md
           grep -q "does NOT" GOVERNANCE.md
           echo "GOVERNANCE.md content validated"
@@ -84,7 +83,7 @@ jobs:
       - name: Validate llms.txt content
         run: |
           set -euo pipefail
-          grep -q "Source of Truth" llms.txt
-          grep -q "Directivas-de-Seguridad.*private" llms.txt
-          grep -q "Contribution Rules" llms.txt
+          grep -q "Portfolio governance" llms.txt
+          grep -q "Cross-project authority" llms.txt
+          grep -q "Never convert a personal project" llms.txt
           echo "llms.txt content validated"
