@@ -43,7 +43,7 @@ jobs:
       - name: Link check (public links only)
         uses: lycheeverse/lychee-action@v1
         with:
-          args: --verbose --no-progress --exclude-mail index.html
+          args: --verbose --no-progress --exclude 'https://www.linkedin.com/' index.html
           fail: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
