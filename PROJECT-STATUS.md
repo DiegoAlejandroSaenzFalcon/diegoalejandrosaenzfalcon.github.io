@@ -31,13 +31,17 @@ Auditoría repository-level del portafolio público de GitHub Pages:
 
 Durante la revisión interna se detectó y corrigió una afirmación incorrecta de estado académico (`En curso` → `Aplazada`) y se suavizaron etiquetas de credenciales que podían implicar una verificación externa no realizada durante esta auditoría. Esto queda registrado para no confundir contenido publicado con evidencia independiente.
 
+## Autoauditoría adicional
+
+Se detectó una segunda inconsistencia de publicación: el bloque estructurado `schema.org` de `index.html` conservaba Bogotá como ubicación mientras el contenido visible del portafolio indicaba Girardot. Se corrigió a Girardot, Cundinamarca, Colombia.
+
 ## Evidencia
 
 - PR #8: baseline de gobierno público, fusionado antes del cierre.
 - Commits de corrección de contenido: `95aae721c5000e0d4ba27f196758b99a8de74199` y `dbf731273552f156d5582717c4c2460c44f4733a`.
 - PR #6: cerrado como superseded.
 - PR #7: cerrado como superseded.
-- Estado actual de la rama auditada: `main`.
+- Estado actual de la rama auditada: `main`. La corrección de autoauditoría adicional se registrará en el commit de cierre de esta revisión.
 
 ## Límites de esta auditoría
 
