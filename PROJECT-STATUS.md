@@ -27,10 +27,14 @@ Auditoría repository-level del portafolio público de GitHub Pages:
 4. Se cerraron PR #6 y PR #7 como trabajo paralelo superseded. No se fusionó código de esos PR.
 5. Se verificó que no existen en el árbol principal los mecanismos inseguros de `HONEYTOKEN.md`, ni referencias indexadas a secretos comunes o a autoridades obsoletas mediante las búsquedas realizadas.
 
+## Autoauditoría del trabajo
+
+Durante la revisión interna se detectó y corrigió una afirmación incorrecta de estado académico (`En curso` → `Aplazada`) y se suavizaron etiquetas de credenciales que podían implicar una verificación externa no realizada durante esta auditoría. Esto queda registrado para no confundir contenido publicado con evidencia independiente.
+
 ## Evidencia
 
 - PR #8: baseline de gobierno público, fusionado antes del cierre.
-- Commit de corrección de contenido: `95aae721c5000e0d4ba27f196758b99a8de74199`.
+- Commits de corrección de contenido: `95aae721c5000e0d4ba27f196758b99a8de74199` y `dbf731273552f156d5582717c4c2460c44f4733a`.
 - PR #6: cerrado como superseded.
 - PR #7: cerrado como superseded.
 - Estado actual de la rama auditada: `main`.
