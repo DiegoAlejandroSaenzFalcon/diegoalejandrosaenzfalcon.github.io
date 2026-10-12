@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the portfolio's structural, navigation, and evidence-first invariants.
-
-Uses only the Python standard library so CI remains lightweight and reproducible.
-This is not a replacement for a full HTML conformance or browser accessibility audit.
-"""
+"""Lightweight structural and evidence-first checks for the public portfolio."""
 from __future__ import annotations
 
 import json
@@ -13,14 +9,8 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 REQUIRED_SECTIONS = {
-    "sobre-mi",
-    "experiencia",
-    "conocimientos",
-    "formacion",
-    "proyectos",
-    "evidencia",
-    "cv",
-    "contacto",
+    "sobre-mi", "experiencia", "conocimientos", "formacion",
+    "proyectos", "evidencia", "cv", "contacto",
 }
 
 
@@ -32,16 +22,13 @@ class PortfolioParser(HTMLParser):
         self.json_ld: list[str] = []
         self._in_json_ld = False
         self._json_ld_parts: list[str] = []
-        self._current_script_type = ""
         self.external_links_without_rel: list[str] = []
         self.phone_links: list[str] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         values = dict(attrs)
-        element_id = values.get("id")
-        if element_id:
-            self.ids.append(element_id)
-
+        if values.get("id"):
+            self.ids.append(values["id"] or "")
         href = values.get("href") or ""
         parsed = urlparse(href)
         if href.startswith("#") and len(href) > 1:
@@ -52,10 +39,8 @@ class PortfolioParser(HTMLParser):
             rel = set((values.get("rel") or "").lower().split())
             if "noopener" not in rel:
                 self.external_links_without_rel.append(href)
-
         if tag.lower() == "script":
-            self._current_script_type = (values.get("type") or "").lower()
-            self._in_json_ld = self._current_script_type == "application/ld+json"
+            self._in_json_ld = (values.get("type") or "").lower() == "application/ld+json"
             self._json_ld_parts = []
 
     def handle_data(self, data: str) -> None:
@@ -66,75 +51,72 @@ class PortfolioParser(HTMLParser):
         if tag.lower() == "script" and self._in_json_ld:
             self.json_ld.append("".join(self._json_ld_parts))
             self._in_json_ld = False
-            self._current_script_type = ""
             self._json_ld_parts = []
 
 
-def fail(message: str) -> None:
-    print(f"FAIL: {message}", file=sys.stderr)
-
-
 def main() -> int:
+    errors = 0
+
+    def report(message: str) -> None:
+        nonlocal errors
+        print(f"FAIL: {message}", file=sys.stderr)
+        errors += 1
+
     path = Path("index.html")
     if not path.is_file() or path.stat().st_size == 0:
-        fail("index.html is missing or empty")
+        report("index.html is missing or empty")
         return 1
 
     source = path.read_text(encoding="utf-8")
     lower = source.lower()
     if not lower.lstrip().startswith("<!doctype html>"):
-        fail("HTML5 doctype must be the first markup")
-        return 1
+        report("HTML5 doctype must be the first markup")
     if '<html lang="es"' not in lower and "<html lang='es'" not in lower:
-        fail("root HTML element must declare lang=es")
-        return 1
+        report("root HTML element must declare lang=es")
 
     parser = PortfolioParser()
     try:
         parser.feed(source)
         parser.close()
-    except Exception as exc:  # HTMLParser should be permissive, but fail closed.
-        fail(f"HTML parser error: {exc}")
+    except Exception as exc:
+        report(f"HTML parser error: {exc}")
         return 1
 
     duplicates = sorted({item for item in parser.ids if parser.ids.count(item) > 1})
     if duplicates:
-        fail("duplicate id attributes: " + ", ".join(duplicates))
+        report("duplicate id attributes: " + ", ".join(duplicates))
     missing_sections = sorted(REQUIRED_SECTIONS - set(parser.ids))
     if missing_sections:
-        fail("required sections missing: " + ", ".join(missing_sections))
+        report("required sections missing: " + ", ".join(missing_sections))
     missing_fragments = sorted(set(parser.fragments) - set(parser.ids))
     if missing_fragments:
-        fail("internal fragment targets missing: " + ", ".join(missing_fragments))
+        report("internal fragment targets missing: " + ", ".join(missing_fragments))
     if parser.external_links_without_rel:
-        fail("external target=_blank links missing rel=noopener: " + ", ".join(parser.external_links_without_rel))
+        report("external target=_blank links missing rel=noopener: " + ", ".join(parser.external_links_without_rel))
     if parser.phone_links:
-        fail("public phone links are not allowed by the current privacy baseline")
-    if "3 años consecutivos con medalla de cero incidentes viales" in source.lower():
-        fail("unverified traffic-award claim must not be published")
-    if "bachiller académico" not in source.lower():
-        fail("completed bachiller education must be represented")
+        report("public phone links are not allowed by the current privacy baseline")
+    if "3 años consecutivos con medalla de cero incidentes viales" in lower:
+        report("unverified traffic-award claim must not be published")
+    if "bachiller académico" not in lower:
+        report("completed bachiller education must be represented")
 
     if not parser.json_ld:
-        fail("JSON-LD Person structured data is missing")
-    else:
-        for index, block in enumerate(parser.json_ld, start=1):
-            try:
-                json.loads(block)
-            except json.JSONDecodeError as exc:
-                fail(f"JSON-LD block {index} is invalid: {exc}")
+        report("JSON-LD Person structured data is missing")
+    for index, block in enumerate(parser.json_ld, start=1):
+        try:
+            data = json.loads(block)
+            if not isinstance(data, dict) or data.get("@type") != "Person":
+                report(f"JSON-LD block {index} must describe a Person")
+        except json.JSONDecodeError as exc:
+            report(f"JSON-LD block {index} is invalid: {exc}")
 
-    if parser.external_links_without_rel or parser.phone_links or duplicates or missing_sections or missing_fragments:
-        return 1
-    if not parser.json_ld or any("JSON-LD block" in line for line in []):
-        return 1
-    if "bachiller académico" not in source.lower() or "3 años consecutivos con medalla de cero incidentes viales" in source.lower():
+    if errors:
         return 1
 
     print(
         "Portfolio validation OK: "
         f"{len(parser.ids)} ids, {len(set(parser.fragments))} internal fragments, "
-        f"{len(parser.json_ld)} JSON-LD block(s), privacy and evidence invariants passed."
+        f"{len(parser.json_ld)} JSON-LD block(s); privacy and evidence checks passed."
     )
     return 0
 
