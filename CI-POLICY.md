@@ -14,7 +14,7 @@ CI validates proposed repository state before merge; it is not an authoring or d
 ## Failure-prevention process
 1. Review governing contracts and Markdown instructions.
 2. Validate changed files locally.
-3. Run static checks and tests.
+3. Run static checks and tests. Secret scanning on Pull Requests requires full Git history (checkout fetch-depth: 0).
 4. Review the diff for scope, truthfulness and security.
 5. Commit on the authorized branch.
 6. Inspect GitHub Actions results.
