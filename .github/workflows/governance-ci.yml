@@ -1,0 +1,59 @@
+name: Governance CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  governance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Secret scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Validate HTML structure
+        run: |
+          set -euo pipefail
+          test -s index.html
+          head -1 index.html | grep -qi '<!doctype html>'
+          grep -q '<html' index.html
+          grep -q '</html>' index.html
+          echo "HTML structure OK"
+
+      - name: Validate portfolio navigation, structured data and privacy
+        run: python3 validate_portfolio.py
+
+      - name: Check required governance files
+        run: |
+          set -euo pipefail
+          for f in AGENTS.md SECURITY.md GOVERNANCE.md llms.txt; do
+            test -s "$f" || { echo "Missing or empty: $f"; exit 1; }
+          done
+
+      - name: Validate authority and change-control rules
+        run: |
+          set -euo pipefail
+          grep -q "Central authority: DiegoAlejandroSaenzFalcon/Directivas-de-Seguridad" AGENTS.md
+          grep -q "Use branches and pull requests" AGENTS.md
+          grep -q "Never add secrets" AGENTS.md
+          grep -q "Directivas-de-Seguridad" SECURITY.md
+          grep -q "Do not commit passwords" SECURITY.md
+          grep -qi "Central Governance Authority" GOVERNANCE.md
+          grep -q "presentation surface" GOVERNANCE.md
+          grep -qi "does NOT" GOVERNANCE.md
+          grep -q "Portfolio governance" llms.txt
+          grep -q "Cross-project authority" llms.txt
+          grep -q "Never convert a personal project" llms.txt
+          echo "Governance assertions OK"
