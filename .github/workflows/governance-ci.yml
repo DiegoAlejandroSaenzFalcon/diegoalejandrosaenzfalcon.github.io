@@ -32,6 +32,9 @@ jobs:
           grep -q '</html>' index.html
           echo "HTML structure OK"
 
+      - name: Validate portfolio navigation, structured data and privacy
+        run: python3 validate_portfolio.py
+
       - name: Check required governance files
         run: |
           set -euo pipefail
