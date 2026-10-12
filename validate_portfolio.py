@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import sys
 from html.parser import HTMLParser
 from pathlib import Path
@@ -73,6 +74,17 @@ def main() -> int:
         report("HTML5 doctype must be the first markup")
     if '<html lang="es"' not in lower and "<html lang='es'" not in lower:
         report("root HTML element must declare lang=es")
+
+    if '<meta name="viewport"' not in lower:
+        report("responsive viewport metadata is missing")
+    if '<meta name="description"' not in lower:
+        report("search description metadata is missing")
+    if '<link rel="canonical" href="https://diegoalejandrosaenzfalcon.github.io/">' not in lower:
+        report("canonical URL must point to the official Pages domain")
+    if len(re.findall(r"<h1\b", lower)) != 1:
+        report("page must have exactly one primary h1 heading")
+    if "prefers-reduced-motion" not in lower:
+        report("reduced-motion accessibility preference is missing")
 
     parser = PortfolioParser()
     try:
